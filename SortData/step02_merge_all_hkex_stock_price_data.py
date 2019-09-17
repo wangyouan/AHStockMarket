@@ -29,6 +29,7 @@ if __name__ == '__main__':
         hkex_dfs.append(tmp_df)
     hkex_df: DataFrame = pd.concat(hkex_dfs, ignore_index=True, sort=False).drop_duplicates().rename(
         columns={'TradingDate': const.DATE})
+    hkex_df: DataFrame = hkex_df.loc[hkex_df[const.DATE] != 'TradingDate'].copy()
     hkex_df.loc[:, const.DATE] = pd.to_datetime(hkex_df[const.DATE], format='%Y-%m-%d')
     hkex_df.to_pickle(os.path.join(hkex_path, '198009_201909_hkex_stock_information.pkl'))
 
