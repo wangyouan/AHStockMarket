@@ -23,7 +23,7 @@ STOCK_DATA_PATH = {
     const.SZSE: os.path.join(const.DATA_PATH, 'SZSE_Stocks', 'sz_stock', '20120101_20190915_stock_price.pkl'),
     const.SSE: os.path.join(const.DATA_PATH, 'SSE_Stocks', '20120101_20190915_sh_stock',
                             '20120101_20190915_stock_price.pkl'),
-    const.HKEX: os.path.join(const.DATA_PATH, 'HKEx_Stocks', '198009_201909_hkex_stock_information.pkl')
+    const.HKEX: os.path.join(const.DATA_PATH, 'HKEx_Stocks', '198009_201909_hkex_stock_information2.pkl')
 }
 
 if __name__ == '__main__':
