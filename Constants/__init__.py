@@ -21,6 +21,9 @@ class Constants(PathInfo):
     PRICE = 'Price'
     RETURN = 'Return'
 
+    MARKET_VALUE = 'mkvalt'
+    SHAREOUTSTANDING = 'csho'
+
     SSE = 'SSE'
     SZSE = 'SZSE'
     HKEX = 'HKEX'
