@@ -19,7 +19,8 @@ class Constants(PathInfo):
     YEAR = 'Year'
     MONTH = 'Month'
     PRICE = 'Price'
-    RETURN = 'Return'
+    RETURN = 'return'
+    PRICE_CHANGE = 'price_chg'
 
     MARKET_VALUE = 'mkvalt'
     SHAREOUTSTANDING = 'csho'
