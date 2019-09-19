@@ -13,6 +13,7 @@ python -m SortData.step05_get_connection_stock_index_data
 import os
 import datetime
 
+import numpy as np
 from tqdm import tqdm
 import pandas as pd
 from pandas import DataFrame
@@ -45,6 +46,21 @@ def get_cumulative_abnormal_return_of_specific_stocks(event_row, price_df, marke
     stock_symbol = event_row[const.TRADING_SYMBOL]
     target_stock_return = price_df.loc[price_df[const.TRADING_SYMBOL] == stock_symbol].copy()
     trading_days = market_return[const.DATE].sort_values(ascending=True)
+
+    sample_period = get_period(trading_days, event_date, period_start=-20, period_end=20)
+
+    result_dict = {}
+    for i, j in enumerate(sample_period):
+        result_dict['AR{}'.format(i - 20)] = np.nan
+
+        day_market_return = market_return.loc[market_return[const.DATE] == j, 'mktret'].iloc[0]
+        target_return = target_stock_return.loc[target_stock_return[const.DATE] == j]
+        if target_return.empty:
+            continue
+        else:
+            result_dict['AR{}'.format(i - 20)] = target_return[const.RETURN].iloc[0] - day_market_return
+
+    return pd.Series(result_dict)
 
 
 def get_cumulative_abnormal_return(connect_event, market_type):
@@ -84,8 +100,16 @@ if __name__ == '__main__':
                                       sep='\t', encoding='utf-16le').replace({'调入': 'in', '调出': 'out'})
     event_df.loc[:, const.DATE] = pd.to_datetime(event_df['ChangeDate'], format='%Y-%m-%d')
     hk_related_events = event_df.loc[event_df['MarketLinkCode'].isin(
-        {'HKEXtoSZSE', 'HKEXtoSSE'}), ['Symbol', 'ChangeType', const.DATE]].drop_duplicates(),
+        {'HKEXtoSZSE', 'HKEXtoSSE'}), ['Symbol', 'ChangeType', const.DATE]].drop_duplicates()
     sse_related_events = event_df.loc[event_df['MarketLinkCode'] == 'SSEtoHKEX',
                                       ['Symbol', 'ChangeType', const.DATE]].copy()
     szse_related_events = event_df.loc[event_df['MarketLinkCode'] == 'SZSEtoHKEX',
                                        ['Symbol', 'ChangeType', const.DATE]].copy()
+
+    hk_ar_return = get_cumulative_abnormal_return(hk_related_events, const.HKEX)
+    sh_ar_return = get_cumulative_abnormal_return(sse_related_events, const.HKEX)
+    sz_ar_return = get_cumulative_abnormal_return(szse_related_events, const.HKEX)
+
+    hk_ar_return.to_pickle(os.path.join(const.TEMP_PATH, '20190919_hk_listed_stock_ar_returns.pkl'))
+    sh_ar_return.to_pickle(os.path.join(const.TEMP_PATH, '20190919_sh_listed_stock_ar_returns.pkl'))
+    sz_ar_return.to_pickle(os.path.join(const.TEMP_PATH, '20190919_sz_listed_stock_ar_returns.pkl'))
