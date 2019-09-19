@@ -7,7 +7,7 @@
 # @Email: wangyouan@gamil.com
 
 """
-python -m SortData.step05_get_connection_stock_index_data
+python -m SortData.step06_calculate_abnormal_return_of_event
 """
 
 import os
@@ -97,7 +97,7 @@ def get_cumulative_abnormal_return(connect_event, market_type):
 
 if __name__ == '__main__':
     tqdm.pandas()
-    event_df: DataFrame = pd.read_csv(os.path.join(const.DATA_PATH, 'StockConnection', 'STK_MKTLink_StockInfoChg.csv'),
+    event_df: DataFrame = pd.read_csv(os.path.join(const.DATA_PATH, 'StockConnection', 'STK_MKTLink_StockInfoChg.txt'),
                                       sep='\t', encoding='utf-16le').replace({'调入': 'in', '调出': 'out'})
     event_df.loc[:, const.DATE] = pd.to_datetime(event_df['ChangeDate'], format='%Y-%m-%d')
     hk_related_events = event_df.loc[event_df['MarketLinkCode'].isin(
